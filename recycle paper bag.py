@@ -13,14 +13,18 @@ def draw():
     global actors 
     screen.blit("eco friendly bg",(0,0))
     if gameover == True:
-        screen.draw.text("game over",(500,300))
+        screen.draw.text("game over",(400,300),fontsize = 100)
     for actor in actors:
         actor.draw()
+    
 def game_over():
     global gameover 
     gameover = True
 def actors_but_better():
-    global actors 
+    global actors , animations
+      
+    actors = []
+    animations = []
     images = ["paper_bag"]
     for i in range(level):
         item = random.choice(trash)
@@ -31,12 +35,29 @@ def actors_but_better():
         actors.append(item)
     gaps = level +2
     gap_size = 1000 // gaps
+    random.shuffle(actors)
     for i in range(level +1):
         actors[i].pos = (i +1) *gap_size,100
     for actor in actors:
         animation = animate(actor,y = 600,duration = 5,on_finished = game_over)
         animations.append(animation)
-    
+
+def on_mouse_down(pos):
+   global level 
+   for actor in actors:
+    if actor.collidepoint(pos):
+        if actor.image == "paper_bag":
+            level = level +1
+            stop()
+            actors_but_better()
+        else:
+            game_over()
+def stop():
+    global animations
+    for animation in animations:
+        if animation.running:
+            animation.stop()
+
 def update():
     pass
 actors_but_better()
